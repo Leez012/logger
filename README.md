@@ -1,6 +1,7 @@
 # logger
-usage
 
+<pre>
+<code>
 package main
 
 import (
@@ -18,3 +19,5 @@ func main() {
 	l.InitStandardLogger(logger.FILE)
 	log.Println("log test")
 }
+</code>
+</pre>
