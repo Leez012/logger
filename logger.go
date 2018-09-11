@@ -17,7 +17,7 @@ type Logger struct {
 	fileName  string
 	Prefix    string
 	Directory string
-	Date      *time.Time
+	Date      *string
 	logFD     *os.File
 }
 
@@ -48,12 +48,16 @@ func (l *Logger) InitStandardLogger(logType uint) {
 func (l *Logger) logLotate() {
 	var err error
 	if l.Date == nil {
-		timeDate := time.Now()
+		timeDate := time.Now().Format("2006-01-02")
 		l.Date = &timeDate
 	}
 
-	if l.fileName == "" || *l.Date != time.Now() {
-		l.fileName = fmt.Sprintf("%s/%s-%s.log", l.Directory, l.Prefix, l.Date.Format("2006-01-02"))
+	if l.fileName == "" || *l.Date != time.Now().Format("2006-01-02") {
+		if l.logFD != nil {
+			l.logFD.Close()
+		}
+		log.Println("Make to new log file")
+		l.fileName = fmt.Sprintf("%s/%s-%s.log", l.Directory, l.Prefix, *l.Date)
 		l.logFD, err = os.OpenFile(l.fileName, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0644)
 		if err != nil {
 			log.Fatalln(err)
