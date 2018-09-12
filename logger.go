@@ -53,12 +53,13 @@ func (l *Logger) logLotate() {
 	if l.Date == nil {
 		l.Date = &timeDate
 	}
-	if l.fileName == "" || *l.Date != timeDate {
+	_, err = os.Stat(l.fileName)
+	if l.fileName == "" || *l.Date != timeDate || err != nil {
 		if l.logFD != nil {
 			l.logFD.Close()
 		}
 		log.Println("Make to new log file")
-		l.fileName = fmt.Sprintf("%s/%s-%s.log", l.Directory, l.Prefix, *l.Date)
+		l.fileName = fmt.Sprintf("%s/%s-%s.log", l.Directory, l.Prefix, timeDate)
 		l.logFD, err = os.OpenFile(l.fileName, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0644)
 		l.Date = &timeDate
 		if err != nil {
