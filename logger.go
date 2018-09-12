@@ -35,6 +35,7 @@ func (l *Logger) InitStandardLogger(logType uint) {
 			}
 		}
 		go func() {
+			defer l.logFD.Close()
 			for {
 				l.logLotate()
 				time.Sleep(time.Second * 10)
@@ -47,18 +48,19 @@ func (l *Logger) InitStandardLogger(logType uint) {
 
 func (l *Logger) logLotate() {
 	var err error
+	tmFormat := "2006-01-02"
+	timeDate := time.Now().Format(tmFormat)
 	if l.Date == nil {
-		timeDate := time.Now().Format("2006-01-02")
 		l.Date = &timeDate
 	}
-
-	if l.fileName == "" || *l.Date != time.Now().Format("2006-01-02") {
+	if l.fileName == "" || *l.Date != timeDate {
 		if l.logFD != nil {
 			l.logFD.Close()
 		}
 		log.Println("Make to new log file")
 		l.fileName = fmt.Sprintf("%s/%s-%s.log", l.Directory, l.Prefix, *l.Date)
 		l.logFD, err = os.OpenFile(l.fileName, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0644)
+		l.Date = &timeDate
 		if err != nil {
 			log.Fatalln(err)
 		}
