@@ -48,7 +48,7 @@ func (l *Logger) InitStandardLogger(logType uint) {
 
 func (l *Logger) logLotate() {
 	var err error
-	tmFormat := "2006-01-02"
+	tmFormat := "20060102"
 	timeDate := time.Now().Format(tmFormat)
 	if l.Date == nil {
 		l.Date = &timeDate
